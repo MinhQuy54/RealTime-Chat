@@ -34,3 +34,11 @@ export const dbConfig = {
     database: process.env.DB_DATABASE ?? 'postgres',
 }
 
+export const jwtConfig = {
+    secret: process.env.JWT_SECRET,
+    refreshSecret: process.env.JWT_REFRESH_SECRET ?? process.env.JWT_SECRET,
+    accessTokenExpiresInLogin: process.env.EXPIRESIN_LOGIN ?? '1h',
+    accessTokenExpiresRefreshInLogin: process.env.EXPIRESIN_REFRESH_LOGIN ?? '7d',
+    accessTokenExpiresInRegister: process.env.EXPIRESIN_REGISTER,
+    accessTokenExpiresInForgotPassword: process.env.EXPIRESIN_FORGOT_PASSWORD,
+}

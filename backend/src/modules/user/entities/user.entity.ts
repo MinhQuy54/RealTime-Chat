@@ -7,11 +7,12 @@ import {
     ManyToOne,
     PrimaryGeneratedColumn,
 } from 'typeorm';
+@Entity('users')
 export class User extends BaseEntity {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @Column({ name: 'username' })
+    @Column({ name: 'username', unique: true })
     username: string;
 
     @Column({ unique: true })
@@ -23,11 +24,11 @@ export class User extends BaseEntity {
     @Column({ name: 'display_name' })
     displayName: string;
 
-    @Column({ name: 'avatar_url' })
-    avatarUrl: string;
+    @Column({ name: 'avatar_url', nullable: true })
+    avatarUrl?: string;
 
-    @Column({ name: 'bio' })
-    bio: string;
+    @Column({ name: 'bio', nullable: true })
+    bio?: string;
 
     @Column({ nullable: true })
     phone?: string;
