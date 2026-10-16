@@ -1,20 +1,32 @@
-import { Controller, Post, Body, Req, Res } from '@nestjs/common';
+import { Controller, Post, Body, Req, Res, Get, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import type { Request, Response } from 'express';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { CurrentUser } from 'src/modules/core/auth/decorators/current-user.decorator';
+import { Public } from 'src/modules/core/auth/decorators/public.decorator';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService) { }
 
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @Get('me')
+  getMe(@CurrentUser('userId') userId: string) {
+    return this.authService.getMe(userId);
+  }
+
+  @Public()
   @Post('register')
   register(@Body() registerDto: RegisterDto) {
     return this.authService.register(registerDto);
   }
 
+  @Public()
   @Post('login')
   async login(
     @Body() loginDto: LoginDto,
@@ -39,6 +51,7 @@ export class AuthController {
     return result;
   }
 
+  @Public()
   @Post('refresh-token')
   async refreshToken(
     @Req() req: Request,
@@ -48,6 +61,7 @@ export class AuthController {
     return this.authService.refreshToken(refreshToken);
   }
 
+  @Public()
   @Post('logout')
   async logout(
     @Req() req: Request,
@@ -58,6 +72,7 @@ export class AuthController {
     res.clearCookie('refreshToken');
     return this.authService.logout(refreshToken);
   }
+
 }
 
 

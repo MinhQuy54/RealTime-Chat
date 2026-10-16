@@ -48,6 +48,7 @@ export class UserService {
   async findById(id: string): Promise<User | null> {
     return this.userRepo.findOne({
       where: { id },
+      relations: { roleSetting: true },
     });
   }
 }

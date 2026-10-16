@@ -30,6 +30,13 @@ export interface LoginResponseData {
   };
 }
 
+export interface MeResponseData {
+  id: string;
+  email: string;
+  fullName: string;
+  phone?: string;
+}
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -192,6 +199,26 @@ export class AuthService {
       message: 'LOGOUT_SUCCESSFUL',
       data: null,
     };
+  }
+
+  async getMe(userId: string): Promise<IResponse<MeResponseData>> {
+    const user = await this.userService.findById(userId);
+
+    if (!user) {
+      throw new UnauthorizedException('USER_NOT_FOUND')
+    }
+
+    return {
+      code: 200,
+      success: true,
+      message: 'PROFILE_FETCHED',
+      data: {
+        id: user.id,
+        email: user.email,
+        fullName: user.displayName,
+        phone: user.phone
+      }
+    }
   }
 }
 

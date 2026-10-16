@@ -1,5 +1,6 @@
 
 import { BaseEntity } from 'src/common/base/base-entity.base';
+import { RoleSettingEntity } from 'src/modules/core/auth/entities/role_settings.entity';
 import {
     Column,
     Entity,
@@ -32,4 +33,8 @@ export class User extends BaseEntity {
 
     @Column({ nullable: true })
     phone?: string;
+
+    @ManyToOne(() => RoleSettingEntity, (roleSetting) => roleSetting.users)
+    @JoinColumn({ name: 'role_setting_id' })
+    roleSetting?: RoleSettingEntity;
 }

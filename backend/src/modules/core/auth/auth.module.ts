@@ -7,15 +7,28 @@ import { JwtModule } from '@nestjs/jwt';
 import { UserSession } from './entities/user-session.entity';
 import { JwtStrategy } from './strategies/jwt.strategy';
 
+import { PassportModule } from '@nestjs/passport';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { RoleGuard } from './guards/role.guard';
+import { RoleSettingEntity } from './entities/role_settings.entity';
+import { PathSettingEntity } from './entities/path_setting.entity';
+import { RolePathAssignmentEntity } from './entities/role_path_assignment.entity';
+
 @Module({
   imports: [
     UserModule,
+    PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({}),
-    TypeOrmModule.forFeature([UserSession]),
+    TypeOrmModule.forFeature([
+      UserSession,
+      RoleSettingEntity,
+      PathSettingEntity,
+      RolePathAssignmentEntity,
+    ]),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy],
-  exports: [AuthService],
+  providers: [AuthService, JwtStrategy, JwtAuthGuard, RoleGuard],
+  exports: [AuthService, JwtAuthGuard, RoleGuard, PassportModule],
 })
 export class AuthModule {}
 
