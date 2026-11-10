@@ -96,8 +96,8 @@ export class AuthService {
     userAgent?: string,
     ipAddress?: string,
   ): Promise<IResponse<LoginResponseData>> {
-    // 1. Lấy input & tìm user
-    const user = await this.userService.findByUsername(dto.username);
+    // 1. Lấy input & tìm user theo username hoặc email
+    const user = await this.userService.findByUsernameOrEmail(dto.username);
 
     if (!user) {
       throw new UnauthorizedException('INVALID_CREDENTIALS');

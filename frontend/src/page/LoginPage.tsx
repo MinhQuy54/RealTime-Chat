@@ -27,10 +27,24 @@ export default function LoginPage() {
       const state = location.state as { from?: string } | null;
       navigate(state?.from ?? "/", { replace: true });
     } catch (err: unknown) {
-      setError(
-        (err as { response?: { data?: { message?: string } } })?.response?.data
-          ?.message ?? "Tên đăng nhập hoặc mật khẩu không chính xác.",
-      );
+      const errorObj = err as {
+        response?: { data?: { message?: string | string[] } };
+        message?: string;
+      };
+      const rawMessage = errorObj?.response?.data?.message ?? errorObj?.message;
+      let displayMessage = "Tài khoản hoặc mật khẩu không chính xác.";
+
+      if (Array.isArray(rawMessage)) {
+        displayMessage = rawMessage.join(", ");
+      } else if (typeof rawMessage === "string") {
+        if (rawMessage === "INVALID_CREDENTIALS") {
+          displayMessage = "Tài khoản hoặc mật khẩu không chính xác.";
+        } else if (rawMessage !== "FETCH_FAILED") {
+          displayMessage = rawMessage;
+        }
+      }
+
+      setError(displayMessage);
     } finally {
       setLoading(false);
     }
@@ -41,7 +55,7 @@ export default function LoginPage() {
       <div className="row g-0 min-vh-100">
         <div className="col-12 col-lg-5 col-xl-4 login-form-panel d-flex flex-column">
           <div className="login-form-wrap w-100 my-auto">
-            <h2 className="login-brand mb-4">RealTimeChat</h2>
+            <h2 className="login-brand mb-4">RealTime Chat</h2>
 
             <h3 className="login-heading mb-2">Welcome Back!</h3>
             <p className="login-subtext mb-3">
@@ -66,10 +80,10 @@ export default function LoginPage() {
                 <input
                   type="text"
                   className="form-control login-input"
-                  placeholder="Username"
+                  placeholder="Username hoặc Email"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  autoComplete="username"
+                  autoComplete="username email"
                   required
                 />
               </div>

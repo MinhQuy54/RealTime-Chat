@@ -45,6 +45,15 @@ export class UserService {
     })
   }
 
+  async findByUsernameOrEmail(identifier: string): Promise<User | null> {
+    const trimmed = identifier.trim();
+    return this.userRepo
+      .createQueryBuilder('user')
+      .where('LOWER(user.username) = LOWER(:identifier)', { identifier: trimmed })
+      .orWhere('LOWER(user.email) = LOWER(:identifier)', { identifier: trimmed })
+      .getOne();
+  }
+
   async findById(id: string): Promise<User | null> {
     return this.userRepo.findOne({
       where: { id },

@@ -6,16 +6,23 @@ export async function request<T>(
     options?: RequestInit
 ): Promise<ApiResponse<T>> {
     const token = localStorage.getItem('accessToken');
-    const res = await fetch(`${env.apiBaseUrl}${path}}`, {
+    const res = await fetch(`${env.apiBaseUrl}${path}`, {
+        credentials: 'include',
         ...options,
         headers: {
             'Content-Type': 'application/json',
             ...(token ? { Authorization: `Bearer ${token}` } : {}),
             ...options?.headers
         }
-    })
+    });
+
+    const data = await res.json().catch(() => null);
+
     if (!res.ok) {
-        throw new Error('FETCH_FAILED')
+        const error = new Error(data?.message || 'FETCH_FAILED');
+        (error as any).response = { data, status: res.status };
+        throw error;
     }
-    return res.json() as Promise<ApiResponse<T>>
+
+    return data as ApiResponse<T>;
 }
