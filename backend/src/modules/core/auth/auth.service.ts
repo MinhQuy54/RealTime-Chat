@@ -96,7 +96,6 @@ export class AuthService {
     userAgent?: string,
     ipAddress?: string,
   ): Promise<IResponse<LoginResponseData>> {
-    // 1. Lấy input & tìm user theo username hoặc email
     const user = await this.userService.findByUsernameOrEmail(dto.username);
 
     if (!user) {

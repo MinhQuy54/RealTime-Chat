@@ -23,3 +23,20 @@ export interface LoginResponse {
     user: AuthUser
 }
 
+export interface RegisterPayload {
+    email: string;
+    password: string;
+    confirmPassword: string;
+    userName: string;
+    firstName: string;
+    lastName: string;
+}
+
+export interface RegisterResponseData {
+    id: string;
+    email: string;
+    userName: string;
+    firstName: string;
+    lastName: string;
+}
+

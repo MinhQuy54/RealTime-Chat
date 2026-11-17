@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { notification } from "antd";
 import { loginApi, saveAuthTokens } from "../api/auth";
 import { useAuth } from "../context/AuthContext";
 import productPreview from "../assets/webApiMain3x.png";
@@ -24,6 +25,14 @@ export default function LoginPage() {
       });
       saveAuthTokens(response.accessToken, response.refreshToken);
       setUser(response.user);
+
+      notification.success({
+        message: "Đăng nhập thành công",
+        description: "Chào mừng bạn quay trở lại!",
+        placement: "topRight",
+        duration: 3,
+      });
+
       const state = location.state as { from?: string } | null;
       navigate(state?.from ?? "/", { replace: true });
     } catch (err: unknown) {
@@ -45,6 +54,12 @@ export default function LoginPage() {
       }
 
       setError(displayMessage);
+      notification.error({
+        message: "Đăng nhập thất bại",
+        description: displayMessage,
+        placement: "topRight",
+        duration: 3,
+      });
     } finally {
       setLoading(false);
     }
@@ -68,6 +83,12 @@ export default function LoginPage() {
               </Link>
               , miễn phí! Chỉ mất chưa đến một phút.
             </p>
+
+            {((location.state as { message?: string } | null)?.message && !error) ? (
+              <div className="alert alert-success py-2" role="alert">
+                {(location.state as { message?: string }).message}
+              </div>
+            ) : null}
 
             {error ? (
               <div className="alert alert-danger py-2" role="alert">
